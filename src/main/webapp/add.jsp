@@ -15,8 +15,8 @@
 add product
 <form method="post" action="product.add.do" target="_blank">
 name:<input name="name"><br>
-<input name="price"><br>
-<input name="rate"><br>
+price:<input name="price"><br>
+rete:<input name="rate"><br>
 <input type="submit" value="submit"/>
 </form>
 </body>

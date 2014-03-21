@@ -14,7 +14,7 @@
 <body>
 add product
 <form method="post" action="product.add.do" target="_blank">
-<input name="name"><br>
+name:<input name="name"><br>
 <input name="price"><br>
 <input name="rate"><br>
 <input type="submit" value="submit"/>

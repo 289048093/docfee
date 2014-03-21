@@ -18,6 +18,7 @@ public class DBUtil {
     static {
         try {
             Class.forName("org.hsqldb.jdbcDriver");
+            System.out.println(Files.DB_DIR);
             con = DriverManager.getConnection("jdbc:hsqldb:file:" + Files.DB_DIR + "/docfeedb", "sa", "");
             Statement stmt = null;
             try {

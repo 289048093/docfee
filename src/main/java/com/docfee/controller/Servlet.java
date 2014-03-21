@@ -31,8 +31,8 @@ public class Servlet extends HttpServlet {
         } else if (uri.matches("^product.+$")) {
             action = uri.substring("product.".length(), uri.length() - 3);
             try {
-                Method method = ProductController.class.getMethod(action);
-                method.invoke(productController,request,response);
+                Method method = ProductController.class.getMethod(action,HttpServletRequest.class,HttpServletResponse.class);
+               if(method!=null) method.invoke(productController,request,response);
             } catch (NoSuchMethodException e) {
                 go404(request,response);
             } catch (InvocationTargetException e) {

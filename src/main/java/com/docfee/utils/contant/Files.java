@@ -11,7 +11,7 @@ import java.io.File;
  */
 public enum Files{
     LOG_DIR(FileUtil.getClassPathFilePath("")+ File.separator+"logs"),
-    DB_DIR("db");
+    DB_DIR(FileUtil.getClassPathFilePath("")+ File.separator+"db");
 
     public String value;
     private Files(String s){

@@ -2,11 +2,14 @@ package com.docfee.controller;
 
 import com.docfee.entity.ProductEntity;
 import com.docfee.service.ProductService;
+import com.docfee.utils.LogUtil;
 import com.docfee.utils.StringUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 
 /**
  * User: Sed.Li(李朝)
@@ -18,11 +21,25 @@ public class ProductController {
     private ProductService productService = new ProductService();
 
     public void add(HttpServletRequest req, HttpServletResponse res) {
-        productService.add( parseReq(req));
+        try {
+            productService.add( parseReq(req));
+        } catch (SQLException e) {
+            LogUtil.error(e);
+        }
+        try {
+            res.setContentType("text/html;UTF-8;");
+            res.getOutputStream().print("add success 添加成功");
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     public void query(HttpServletRequest req, HttpServletResponse res){
-        productService.query(parseReq(req));
+        try {
+            productService.query();
+        } catch (SQLException e) {
+            LogUtil.error(e);
+        }
     }
 
     private ProductEntity parseReq(HttpServletRequest req) {
@@ -36,7 +53,11 @@ public class ProductController {
     }
 
     public void delete(HttpServletRequest req, HttpServletResponse res) {
-        productService.delete( parseReq(req));
+        try {
+            productService.delete( parseReq(req));
+        } catch (SQLException e) {
+            LogUtil.error(e);
+        }
     }
 
 }

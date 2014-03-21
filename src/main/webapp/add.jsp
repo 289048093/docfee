@@ -12,6 +12,7 @@
 </head>
 
 <body>
+add product
 <form method="post" action="product.add.do" target="_blank">
 <input name="name"><br>
 <input name="price"><br>

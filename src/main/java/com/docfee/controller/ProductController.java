@@ -5,11 +5,13 @@ import com.docfee.service.ProductService;
 import com.docfee.utils.LogUtil;
 import com.docfee.utils.StringUtil;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * User: Sed.Li(李朝)
@@ -36,14 +38,27 @@ public class ProductController {
 
     public void query(HttpServletRequest req, HttpServletResponse res){
         try {
-            productService.query();
+            List<ProductEntity> list= productService.query();
+//            res.getWriter().print(list);
+            req.setAttribute("products",list);
         } catch (SQLException e) {
             LogUtil.error(e);
+//        } catch (IOException e) {
+//            LogUtil.error(e);
+        }
+        try {
+            req.getRequestDispatcher("product/query.jsp").forward(req,res);
+        } catch (ServletException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
     private ProductEntity parseReq(HttpServletRequest req) {
         ProductEntity productEntity = new ProductEntity();
+        String id = req.getParameter("id");
+       if(id!=null)productEntity.setId(Long.parseLong(id));
         productEntity.setName(req.getParameter("name"));
         String price = req.getParameter("price");
         if (!StringUtil.isBlank(price)) productEntity.setPrice(new BigDecimal(price));
@@ -57,6 +72,11 @@ public class ProductController {
             productService.delete( parseReq(req));
         } catch (SQLException e) {
             LogUtil.error(e);
+        }
+        try {
+            res.sendRedirect("product.query.do");
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 

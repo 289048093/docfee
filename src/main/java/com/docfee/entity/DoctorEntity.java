@@ -11,4 +11,21 @@ public class DoctorEntity extends BaseEntity {
 
     private String name;
 
+    private String hospital;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getHospital() {
+        return hospital;
+    }
+
+    public void setHospital(String hospital) {
+        this.hospital = hospital;
+    }
 }

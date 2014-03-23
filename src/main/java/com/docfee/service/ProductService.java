@@ -4,6 +4,7 @@ import com.docfee.dao.ProductDAO;
 import com.docfee.entity.ProductEntity;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * User: Sed.Li(李朝)
@@ -22,7 +23,7 @@ public class ProductService {
         productDAO.delete(productEntity) ;
     }
 
-    public void query() throws SQLException {
-        productDAO.query();
+    public List<ProductEntity> query() throws SQLException {
+        return productDAO.query();
     }
 }

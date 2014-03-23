@@ -45,7 +45,7 @@ public class ProductDAO {
         List<ProductEntity> list = new LinkedList<ProductEntity>();
         PreparedStatement stmt = null;
         try {
-            stmt = DBUtil.getCon().prepareStatement("select id,name,price,default_rate) from tb_product");
+            stmt = DBUtil.getCon().prepareStatement("select id,name,price,default_rate from tb_product");
             ResultSet rs = stmt.executeQuery();
             ProductEntity p = null;
             while (rs.next()) {

@@ -19,16 +19,26 @@ import java.util.Map;
  */
 public class Servlet extends HttpServlet {
     ProductController productController = new ProductController();
+    DoctorController doctorController = new DoctorController();
 
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uri = request.getRequestURI();
         uri = uri.substring(uri.lastIndexOf("/")+1) ;
         String action = null;
-        if (uri.matches("^doctor.+$.do")) {
+        if (uri.matches("^doctor.+.do$")) {
             action = uri.substring("doctor.".length(), uri.length() - 3);
+            try {
+                Method method = DoctorController.class.getMethod(action,HttpServletRequest.class,HttpServletResponse.class);
+                if(method!=null) method.invoke(doctorController,request,response);
+            } catch (NoSuchMethodException e) {
+                go404(request,response);
+            } catch (InvocationTargetException e) {
+                LogUtil.error(e);
+            } catch (IllegalAccessException e) {
+                LogUtil.error(e);
+            }
 
-
-        } else if (uri.matches("^product.+$")) {
+        } else if (uri.matches("^product.+.do$")) {
             action = uri.substring("product.".length(), uri.length() - 3);
             try {
                 Method method = ProductController.class.getMethod(action,HttpServletRequest.class,HttpServletResponse.class);
@@ -40,8 +50,18 @@ public class Servlet extends HttpServlet {
             } catch (IllegalAccessException e) {
                 LogUtil.error(e);
             }
-        } else if (uri.matches("^count.+")) {
-
+        } else if (uri.matches("^count.+.do$")) {
+            action = uri.substring("count.".length(), uri.length() - 3);
+            try {
+                Method method = ProductController.class.getMethod(action,HttpServletRequest.class,HttpServletResponse.class);
+                if(method!=null) method.invoke(productController,request,response);
+            } catch (NoSuchMethodException e) {
+                go404(request,response);
+            } catch (InvocationTargetException e) {
+                LogUtil.error(e);
+            } catch (IllegalAccessException e) {
+                LogUtil.error(e);
+            }
         } else {
 
         }

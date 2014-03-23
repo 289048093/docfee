@@ -45,4 +45,16 @@ public class ProductEntity extends BaseEntity {
     public void setDefaultRate(BigDecimal defaultRate) {
         this.defaultRate = defaultRate;
     }
+
+    @Override
+    public String toString() {
+        return String.format("{id:%1$d,name:%2$s,price:%3$s,defaultRate:%4$s}",getId(),name,price,defaultRate);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    public static void main(String[] args) {
+        ProductEntity pro = new ProductEntity();
+        pro.setId(123L);
+        pro.setPrice(new BigDecimal("123.12"));
+        System.out.println(pro);
+    }
 }

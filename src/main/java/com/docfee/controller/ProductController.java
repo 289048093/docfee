@@ -22,6 +22,10 @@ public class ProductController {
 
     private ProductService productService = new ProductService();
 
+    public ProductService getProductService() {
+        return productService;
+    }
+
     public void add(HttpServletRequest req, HttpServletResponse res) {
         try {
             productService.add( parseReq(req));

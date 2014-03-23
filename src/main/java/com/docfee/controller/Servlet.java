@@ -18,10 +18,14 @@ import java.util.Map;
  * Time: 下午2:28
  */
 public class Servlet extends HttpServlet {
-    ProductController productController = new ProductController();
-    DoctorController doctorController = new DoctorController();
+    static ProductController productController = new ProductController();
+    static DoctorController doctorController = new DoctorController();
+
+    static CountController countController = new CountController();
 
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         String uri = request.getRequestURI();
         uri = uri.substring(uri.lastIndexOf("/")+1) ;
         String action = null;
@@ -53,8 +57,8 @@ public class Servlet extends HttpServlet {
         } else if (uri.matches("^count.+.do$")) {
             action = uri.substring("count.".length(), uri.length() - 3);
             try {
-                Method method = ProductController.class.getMethod(action,HttpServletRequest.class,HttpServletResponse.class);
-                if(method!=null) method.invoke(productController,request,response);
+                Method method = CountController.class.getMethod(action,HttpServletRequest.class,HttpServletResponse.class);
+                if(method!=null) method.invoke(countController,request,response);
             } catch (NoSuchMethodException e) {
                 go404(request,response);
             } catch (InvocationTargetException e) {

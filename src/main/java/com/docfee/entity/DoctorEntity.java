@@ -28,4 +28,9 @@ public class DoctorEntity extends BaseEntity {
     public void setHospital(String hospital) {
         this.hospital = hospital;
     }
+
+    @Override
+    public String toString() {
+        return String.format("'id':'%1$d','name':'%2$s','hospital':'%3$s'",getId(),name,hospital);
+    }
 }

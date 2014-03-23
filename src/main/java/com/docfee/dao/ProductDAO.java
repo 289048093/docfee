@@ -33,8 +33,8 @@ public class ProductDAO {
         try {
             stmt = DBUtil.getCon().prepareStatement("insert into tb_product(name,price,default_rate) values(?,?,?)");
             stmt.setString(1, productEntity.getName());
-            stmt.setString(2, productEntity.getPrice().toString());
-            stmt.setString(3, productEntity.getDefaultRate().toString());
+            stmt.setDouble(2, productEntity.getPrice().doubleValue());
+            stmt.setDouble(3, productEntity.getDefaultRate().doubleValue());
             stmt.execute();
         } finally {
             DBUtil.close(stmt);

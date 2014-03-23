@@ -26,7 +26,7 @@
     <c:forEach items="${doctors}" var="doc">
     <tr>
         <td>${doc.name}</td>
-        <td>${doc.hospital}元</td>
+        <td>${doc.hospital}</td>
         <td><a href="doctor.delete.do?id=${doc.id}">删除</a></td>
     </tr>
     </c:forEach>

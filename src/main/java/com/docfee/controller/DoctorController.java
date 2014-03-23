@@ -19,6 +19,10 @@ public class DoctorController {
 
     private DoctorService doctorService = new DoctorService();
 
+    public DoctorService getDoctorService() {
+        return doctorService;
+    }
+
     public void delete(HttpServletRequest req,HttpServletResponse res){
         try {
             doctorService.delete(parseDoc(req));

@@ -31,6 +31,6 @@ public class DoctorEntity extends BaseEntity {
 
     @Override
     public String toString() {
-        return String.format("'id':'%1$d','name':'%2$s','hospital':'%3$s'",getId(),name,hospital);
+        return String.format("{'id':%1$d,'name':'%2$s','hospital':'%3$s'}",getId(),name,hospital);
     }
 }

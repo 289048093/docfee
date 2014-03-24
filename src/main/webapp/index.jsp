@@ -8,6 +8,7 @@
 <a href="doctor/add.jsp" target="_blank">doctor add</a><br>
 <a href="doctor.query.do" target="_blank">doctor query</a><br>
 <hr>
-<a href="count.query.do" target="_blank">计算费用</a>
+<a href="count.init.do" target="_blank">计算费用</a><br/>
+<a href="count.query.do" target="_blank">查询所有</a>
 </body>
 </html>

@@ -1,8 +1,5 @@
 package com.docfee.vo;
 
-import com.docfee.entity.DoctorEntity;
-import com.docfee.entity.ProductEntity;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -11,10 +8,14 @@ import java.util.Date;
  * Date: 14-3-24
  * Time: 上午12:26
  */
-public class DoctorBidProductVO extends BaseVO {
+public class RecordVO extends BaseVO {
     private Long doctorId;
 
+    private String doctorName;
+
     private Long productId;
+
+    private String productName;
 
     private BigDecimal rate;
 
@@ -23,6 +24,7 @@ public class DoctorBidProductVO extends BaseVO {
     private BigDecimal price;
 
     private Integer num;
+
 
     public Long getDoctorId() {
         return doctorId;
@@ -70,5 +72,16 @@ public class DoctorBidProductVO extends BaseVO {
 
     public void setNum(Integer num) {
         this.num = num;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("{id:%1$d,doctorId:%2$s,productId:%3$s,price:%4$s,rate:%5$s,num:%6$s,date:%7$tF}",getId(),doctorId,productId,price,rate,num,date);
+    }
+
+    public static void main(String[] args) {
+        RecordVO vo = new RecordVO();
+//        vo.setDate(new Date());
+        System.out.println(vo);
     }
 }

@@ -1,13 +1,12 @@
 package com.docfee.utils;
 
-import com.docfee.controller.DoctorController;
-import com.docfee.entity.DoctorEntity;
-import org.codehaus.jackson.JsonParseException;
+import com.docfee.vo.RecordVO;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.io.StringWriter;
 import java.util.*;
 
 /**
@@ -17,62 +16,67 @@ import java.util.*;
  */
 public class JsonUtil {
     private static ObjectMapper objectMapper = new ObjectMapper();
+    static StringWriter writer = new StringWriter();
+    static JsonGenerator generator = null;
+
+    static {
+        try {
+            objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES,true);
+            generator = objectMapper.getJsonFactory().createJsonGenerator(writer);
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    if (writer != null) IOUtil.closeQuietly(writer);
+                    if (generator != null && !generator.isClosed()) {
+                        IOUtil.closeQuietly(generator);
+                    }
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
 
     public static <T> T parseJson(String json, Class<T> clazz) throws IOException {
         return objectMapper.readValue(json, clazz);
     }
 
     public static <T extends Collection<E>, E> T parseCollectionJson(String json, Class<T> collectionClazz, Class<E> beanClazz) throws IOException {
+        List<Map<String, ?>> list = objectMapper.readValue(json, List.class);
         T res = null;
         try {
             res = collectionClazz.newInstance();
-        } catch (InstantiationException e) {
+        } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            return null;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            return null;
+            throw new IllegalArgumentException(e);
         }
-        Collection<Map<String, ?>> col = parseJson(json, Collection.class);
-        Map<String, ?> tmp = null;
-        for (Map<String, ?> map : col) {
-            E bean = null;
-            try {
-                bean = beanClazz.newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-            for (Map.Entry<String, ?> e : map.entrySet()) {
-                String key = e.getKey();
-                Object value = e.getValue();
-                String ms = "set" + key.substring(0, 1).toUpperCase() + key.substring(1);
-                try {
-                    Method method = beanClazz.getMethod(ms, e.getValue().getClass());
-                    method.invoke(bean, value);
-                    res.add(bean);
-                } catch (NoSuchMethodException e1) {
-                    e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                } catch (IllegalAccessException e1) {
-                    e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                } catch (InvocationTargetException e1) {
-                    e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-            }
+        for (Map m : list) {
+            generator.writeObject(m);
+            String tmp = writer.getBuffer().toString();
+            E doc = objectMapper.readValue(tmp, beanClazz);
+            res.add(doc);
+            writer.getBuffer().delete(0, tmp.length());
         }
         return res;
     }
 
-    public static void main(String[] args) throws IOException, NoSuchMethodException {
-        String s = "[{\"id\":111,\"name\":\"tom\"},{\"id\":321,\"name\":\"jarvis\"}]";
-        List<DoctorEntity> ds = null;
-//        ds = parseCollectionJson(s, ArrayList.class, DoctorEntity.class);
-//        Iterator it = ds.get(0)
-//        it.next();
-        System.out.println(ds);
-        DoctorEntity doc = new DoctorEntity() ;
-        System.out.println(DoctorEntity.class.getDeclaredMethod("setId"));
-        System.out.println("abcd".substring(0, 1));
+    public static <T> ArrayList<T> parseCollectionJson(String json, Class<T> t) throws IOException {
+        return parseCollectionJson(json,ArrayList.class,t);
+    }
+
+    public static <T> void main(String[] args) throws IOException, NoSuchMethodException {
+        String s = "[{productId:1,doctorId:0,price:100.0,num:44},{productId:2,doctorId:0,price:60.0,num:41}]";
+//        s = s.substring(0,1);
+//        s = s.substring(0,s.length()-1);
+//        String[] ss = s.split(",");
+//        for(String e:ss){
+//            DoctorEntity doc = parseJson(e,DoctorEntity.class);
+//            System.out.println(doc);
+//        }
+        ArrayList<String> clz = new ArrayList<String>();
+       List<RecordVO> res = parseCollectionJson(s,RecordVO.class);
+        System.out.println(res);
+
+
     }
 }

@@ -34,7 +34,7 @@ public class ProductController {
         }
         try {
             res.setContentType("text/html;UTF-8;");
-            res.getOutputStream().print("add success 添加成功");
+            res.getOutputStream().write("add success 添加成功".getBytes("UTF-8"));
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

@@ -8,7 +8,7 @@ import java.util.Date;
  * Date: 14-3-21
  * Time: 下午2:22
  */
-public class DoctorBidProductEntity extends BaseEntity {
+public class RecordEntity extends BaseEntity {
 
     private DoctorEntity doctor;
 

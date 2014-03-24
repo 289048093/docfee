@@ -16,12 +16,8 @@
         }
     </style>
     <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/global.js"></script>
     <script type="text/javascript">
-        if (!Number.prototype.toFixed) {
-            Number.prototype.toFixed = function (num) {
-                with (Math)return round(this.valueOf() * pow(10, num)) / pow(10, num);
-            }
-        }
 
         var products = ${products};
         var doctors = ${doctors};
@@ -36,15 +32,27 @@
             docArr[doctors[i].id] = doctors[i];
         }
         proTd += "</select>";
-        function addProduct() {
-            var tr = "<tr ><td class='pro_td'>" + proTd + "</td>" +
-                    "<td class='per_price_td'><input class='per_price_input'></td>" +
-                    "<td class='rate_td'><input class='rate_input'></td>" +
-                    "<td class='num_td'><input class='num_input'></td>" +
-                    "<td class='total_td'></td>" +
-                    "<td class='fee_td'></td>" +
-                    "<td class='operate_td'><input type='button' value='删除' onclick='$(this).parent().parent().remove();countAll();'></td></tr>";
+        function addProduct(obj) {
+            obj = obj || {};
+            if (obj.price && typeof obj.price == "string") {
+                obj.price = parseFloat(obj.price);
+            }
+            if (obj.rate && typeof obj.rate == "string") {
+                obj.rate = parseFloat(obj.rate);
+            }
+            if (obj.num && typeof obj.num == "string") {
+                obj.num = parseFloat(obj.num);
+            }
+            var tr = $("<tr><td class='pro_td'>" + proTd + "</td>" +
+                    "<td class='per_price_td'><input class='per_price_input' value='" + (obj.price || 0) + "'></td>" +
+                    "<td class='rate_td'><input class='rate_input' value='" + (obj.rate || 0) + "'></td>" +
+                    "<td class='num_td'><input class='num_input' value='" + (obj.num || 0) + "'></td>" +
+                    "<td class='total_td'>" + (obj.num ? 0 : obj.num * obj.price) + "</td>" +
+                    "<td class='fee_td'>" + (obj.num ? 0 : obj.num * obj.price * obj.rate) + "</td>" +
+                    "<td class='operate_td'><input type='button' value='删除' onclick='$(this).parent().parent().remove();countAll();'></td></tr>");
             $("#t_content").append(tr);
+            tr.find(".pro_sel").val(obj.productId || obj.product && obj.product.id);
+            changeData(null, null, tr);
         }
         function changeProduct(o) {
             var sel = $(o);
@@ -54,34 +62,19 @@
             var rateInput = sel.parent().nextAll('.rate_td').find('.rate_input');
             rateInput.val(obj.defaultRate);
             sel.parent().nextAll('.per_price_td').find('.per_price_input').val(obj.price);
+            changeData(obj.defaultRate, null, $(o).parent().parent())
         }
 
         $(function () {
             $('.rate_input').live('keyup', function (e) {
                 var rate = this.value;
                 var num = $(this).parent().next().find('.num_input').val();
-                if (rate && num) {
-                    var total = $(this).parent().nextAll('.total_td');
-                    var proId = $(this).parent().parent().find('.pro_td').find('.pro_sel').val()
-                    var price = proArr[proId].price;
-                    total.html(parseFloat(price) * parseInt(num));
-                    var fee = $(this).parent().nextAll('.fee_td');
-                    fee.html((parseFloat(rate) * parseInt(num)).toFixed(2));
-                }
-                countAll();
+                changeData(rate, num, $(this).parent().parent());
             });
             $('.num_input').live('keyup', function (e) {
                 var rate = $(this).parent().prevAll('.rate_td').find('.rate_input').val();
                 var num = $(this).val();
-                if (rate && num) {
-                    var total = $(this).parent().nextAll('.total_td');
-                    var proId = $(this).parent().parent().find('.pro_td').find('.pro_sel').val()
-                    var price = proArr[proId].price;
-                    total.html(parseFloat(price) * parseInt(num));
-                    var fee = $(this).parent().nextAll('.fee_td');
-                    fee.html((parseFloat(rate) * parseInt(num)).toFixed(2));
-                }
-                countAll();
+                changeData(rate, num, $(this).parent().parent());
             });
             for (var i = 1; i < 13; i++) {
                 $("#month").append("<option value='" + i + "'>" + i + "</option>")
@@ -89,7 +82,19 @@
             var now = new Date();
             $('#year').val(now.getFullYear() - 2000);
             $('#month').val(now.getMonth() + 1);
+            loadAjaxData();
         });
+        function changeData(rate, num, tr_) {
+            rate = rate || tr_.find('.rate_input').val();
+            num = num || tr_.find('.num_input').val();
+            var total = tr_.find('.total_td');
+            var proId = tr_.find('.pro_td').find('.pro_sel').val()
+            var price = proArr[proId].price;
+            total.html(parseFloat(price) * parseInt(num));
+            var fee = tr_.find('.fee_td');
+            fee.html((parseFloat(rate) * parseFloat(price) * parseInt(num)).toFixed(2));
+            countAll();
+        }
         function countAll() {
             var totalArr = $('#t_content').find('.total_td');
             var feeArr = $('#t_content').find('.fee_td');
@@ -143,21 +148,44 @@
         window.printWin = null;
         function print() {
             printWin = window.open("count/print.jsp");
-            var params =  generateParams();
+            var params = generateParams();
             printWin.window.params = params;
             printWin.window.doctor = docArr[params.docId];
+            printWin.window.products = proArr;
+        }
+        function getDocId() {
+            return $('#doctor').val();
+        }
+        function getDate() {
+            return  20 + $('#year').val() + "-" + $('#month').val();
+        }
+        function loadAjaxData() {
+            var params = {"docId": getDocId(),
+                date: getDate()};
+            $.post("count.queryAjax.do", params, function (data) {
+                var tbody_ = $('#t_content');
+                tbody_.empty();
+                countAll();
+                if (!data)return;
+                var list = data.result;
+                if (!list)return;
+                for (var i = 0; i < list.length; i++) {
+                    addProduct(list[i]);
+                }
+            });
         }
     </script>
 </head>
 <body>
 
-医生:<select id="doctor">
+医生:<select id="doctor" onchange="loadAjaxData()">
     <%--<option value="">--请选择--</option>--%>
     <c:forEach items="${doctors}" var="doc">
         <option value="${doc.id}">${doc.name}</option>
     </c:forEach>
 </select>
-| 20<input id="year" style="width:30px;">年<select id="month"></select>月
+| 20<input id="year" style="width:30px;" onkeyup="loadAjaxData()">年<select id="month"
+                                                                           onchange="loadAjaxData()"></select>月
 <table border="1">
     <tr>
         <td>药品名称</td>

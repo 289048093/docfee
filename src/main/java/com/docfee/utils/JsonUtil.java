@@ -21,7 +21,7 @@ public class JsonUtil {
 
     static {
         try {
-            objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES,true);
+            objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
             generator = objectMapper.getJsonFactory().createJsonGenerator(writer);
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
@@ -55,16 +55,34 @@ public class JsonUtil {
             String tmp = writer.getBuffer().toString();
             E doc = objectMapper.readValue(tmp, beanClazz);
             res.add(doc);
-            writer.getBuffer().delete(0, tmp.length());
+            clearWriter();
         }
         return res;
     }
 
     public static <T> ArrayList<T> parseCollectionJson(String json, Class<T> t) throws IOException {
-        return parseCollectionJson(json,ArrayList.class,t);
+        return parseCollectionJson(json, ArrayList.class, t);
+    }
+
+    public static String toJson(Object obj) {
+        clearWriter();
+        String json = null;
+        try {
+            generator.writeObject(obj);
+            json = writer.getBuffer().toString();
+            clearWriter();;
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return json;
+    }
+
+    private static void clearWriter() {
+        writer.getBuffer().delete(0, writer.getBuffer().length());
     }
 
     public static <T> void main(String[] args) throws IOException, NoSuchMethodException {
+        clearWriter();
         String s = "[{productId:1,doctorId:0,price:100.0,num:44},{productId:2,doctorId:0,price:60.0,num:41}]";
 //        s = s.substring(0,1);
 //        s = s.substring(0,s.length()-1);
@@ -74,9 +92,10 @@ public class JsonUtil {
 //            System.out.println(doc);
 //        }
         ArrayList<String> clz = new ArrayList<String>();
-       List<RecordVO> res = parseCollectionJson(s,RecordVO.class);
+        List<RecordVO> res = parseCollectionJson(s, RecordVO.class);
         System.out.println(res);
-
+        System.out.println(toJson(res));
+        System.out.println(String.format("aaa%sbbb","oooo"));
 
     }
 }

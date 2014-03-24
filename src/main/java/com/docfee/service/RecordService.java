@@ -38,7 +38,16 @@ public class RecordService {
 
     public List<RecordEntity> query() {
         try {
-            return recordDAO.queryWithDoctorAndProduct();
+            return recordDAO.queryWithDoctorAndProduct(null,null,null);
+        } catch (SQLException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        return new ArrayList<RecordEntity>();
+    }
+
+    public List<RecordEntity> query(Long docId, Date date) {
+        try {
+            return recordDAO.queryWithDoctorAndProduct(docId,null,date);
         } catch (SQLException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

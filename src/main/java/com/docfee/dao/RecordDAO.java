@@ -49,14 +49,34 @@ public class RecordDAO {
         }
     }
 
-    public List<RecordEntity> queryWithDoctorAndProduct() throws SQLException {
+    public List<RecordEntity> queryWithDoctorAndProduct(Long docId,Long proId,Date date) throws SQLException {
+        StringBuilder sql = new StringBuilder("select re.id recId,re.price recPrice,re.rate recRate,re.num recNum,re.add_date recDate," +
+                "doc.id docId,doc.name docName,doc.hospital docHos," +
+                "pro.id proId,pro.name proName,pro.price proPrice,pro.default_rate proRate " +
+                "from tb_record re left join tb_doctor doc on re.doctor_id=doc.id left join tb_product pro on re.product_id=pro.id where 1=1 ");
+        if(docId!=null){
+            sql.append(" and doc.id=? ");
+        }
+        if(proId!=null){
+            sql.append(" and pro.id=? ");
+        }
+        if(date!=null){
+            sql.append(" and re.add_date=? ");
+        }
         List<RecordEntity> recs = new ArrayList<RecordEntity>();
         PreparedStatement stmt = null;
         try {
-            stmt = DBUtil.getCon().prepareStatement("select re.id recId,re.price recPrice,re.rate recRate,re.num recNum,re.add_date recDate," +
-                    "doc.id docId,doc.name docName,doc.hospital docHos," +
-                    "pro.id proId,pro.name proName,pro.price proPrice,pro.default_rate proRate " +
-                    "from tb_record re left join tb_doctor doc on re.doctor_id=doc.id left join tb_product pro on re.product_id=pro.id");
+            stmt = DBUtil.getCon().prepareStatement(sql.toString());
+            int i = 0;
+            if(docId!=null){
+                stmt.setLong(++i,docId);
+            }
+            if(proId!=null){
+                stmt.setLong(++i,proId);
+            }
+            if(date!=null){
+                stmt.setDate(++i,DateUtil.toSqlDate(date));
+            }
             ResultSet rs = stmt.executeQuery();
             RecordEntity rec = null;
             DoctorEntity doc = null;

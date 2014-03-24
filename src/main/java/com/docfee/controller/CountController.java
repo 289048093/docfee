@@ -8,6 +8,7 @@ import com.docfee.service.DoctorService;
 import com.docfee.service.ProductService;
 import com.docfee.utils.DateUtil;
 import com.docfee.utils.JsonUtil;
+import com.docfee.utils.StringUtil;
 import com.docfee.vo.RecordVO;
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonGenerator;
@@ -84,14 +85,28 @@ public class CountController {
 
     }
 
-    static public void main(String[] args) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonGenerator jsonGenerator = objectMapper.getJsonFactory().createJsonGenerator(System.out, JsonEncoding.UTF8);
-        DoctorEntity doctorEntity = objectMapper.readValue("{\"id\":\"122\"}", DoctorEntity.class);
-        System.out.println(doctorEntity);
+    public void queryAjax(HttpServletRequest req, HttpServletResponse res) {
+        res.setContentType("application/json");
+        Long docId = null;
+        Date date = null;
+        String docIdStr = req.getParameter("docId");
+        String dateStr = req.getParameter("date");
+        if(!StringUtil.isBlank(docIdStr)){
+            docId = Long.parseLong(docIdStr);
+        }
+        if(!StringUtil.isBlank(dateStr)){
+            date = DateUtil.parse(dateStr,"yyyy-MM");
+        }
+        List<RecordEntity> vos = recordService.query(docId,date);
+        try {
+            res.getWriter().write(String.format("{\"result\":%s}",JsonUtil.toJson(vos)));
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
 
-        jsonGenerator.flush();
-        jsonGenerator.close();
+     static public void main(String[] args) throws IOException {
+         System.out.println(String.format("aaa%sbbb","oooo"));
     }
 
 

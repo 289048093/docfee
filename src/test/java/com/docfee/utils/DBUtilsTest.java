@@ -14,7 +14,7 @@ public class DBUtilsTest {
 
     @Test
     public void execTest() throws SQLException {
-               DBUtil.exec("drop table tb_test");
+//               DBUtil.exec("drop table tb_test");
     }
 
 }

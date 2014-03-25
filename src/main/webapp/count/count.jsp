@@ -148,10 +148,18 @@
         window.printWin = null;
         function print() {
             printWin = window.open("count/print.jsp");
+            setPrintParams();
+        }
+        function setPrintParams(){
+            if(!printWin || !printWin.setParams){
+                setTimeout(setPrintParams,5);
+                return;
+            }
             var params = generateParams();
-            printWin.window.params = params;
-            printWin.window.doctor = docArr[params.docId];
-            printWin.window.products = proArr;
+//            printWin.params = params;
+//            printWin.doctor = docArr[params.docId];
+//            printWin.products = proArr;
+            printWin.setParams(params,docArr[params.docId],proArr);
         }
         function getDocId() {
             return $('#doctor').val();
@@ -199,15 +207,15 @@
     <tbody id="t_content"></tbody>
     <tr>
         <td>总计</td>
-        <td></td>
-        <td></td>
-        <td></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
         <td id="allPrice"></td>
         <td id="allFee"></td>
-        <td class="operate_td"></td>
+        <td class="operate_td">&nbsp;</td>
     </tr>
     <tr>
-        <td colspan="7"><input type="button" value="添加" onclick="addProduct();">|<input type="button" value="保存"
+        <td colspan="7" style="width:100%;"><input type="button" value="添加" onclick="addProduct();">|<input type="button" value="保存"
                                                                                         onclick="save()">|<input
                 type="button" value="打印" onclick="print()"></td>
     </tr>

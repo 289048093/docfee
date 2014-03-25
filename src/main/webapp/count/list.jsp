@@ -11,6 +11,7 @@
 <html>
 <head>
     <title></title>
+    <meta http-equiv="content-type" charset="UTF-8">
     <style type="text/css">
         td{
             width: 100px;

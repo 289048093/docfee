@@ -26,35 +26,46 @@
         var params;
         var doctor;
         var products;
-        $(function () {
+        var total_money_ = 0;
+        var total_fee_ = 0;
+        function setParams(par, doc, pro) {
+            params = par;
+            doctor = doc;
+            products = pro;
+        }
+        function renderData() {
+            if (!params) {
+                setTimeout(renderData, 10);
+                return;
+            }
             var date = params.date;
             var docName = doctor.name;
-            var total_money_ = 0;
-            var total_fee_  = 0;
             $("#doc_name_sp").html(docName);
             $("#date_sp").html(date);
-            if (params) {
-                var list = eval(params.datalist);
-                for (var i = 0; i < list.length; i++) {
-//                    alert(generateTr(list[i])) ;
-                    $('#t_body').append(generateTr(list[i]));
-                }
-                $('#total_money_td').html(total_money_.toFixed(2));
-                $('#total_fee_td').html(total_fee_.toFixed(2));
+            var list = eval(params.datalist);
+            for (var i = 0; i < list.length; i++) {
+                $('#t_body').append(generateTr(list[i]));
             }
-            function generateTr(data) {
-                var name_ = products[data.productId].name;
-                var price_ = data.price;
-                var rate_ = data.rate;
-                var num_ = data.num;
-                var total_ = (parseFloat(price_) * parseInt(num_)).toFixed(2);
-                var fee_ = (total_ * parseFloat(rate_)).toFixed(2);
-                var td_ = "</td><td>";
-                total_money_ += parseFloat(total_);
-                total_fee_ += parseFloat(fee_);
-                return ["<tr><td>" + name_, price_, rate_, num_, total_, fee_ + "</td><tr>"].join(td_);
-            }
+            $('#total_money_td').html(total_money_.toFixed(2));
+            $('#total_fee_td').html(total_fee_.toFixed(2));
+
+        }
+        function generateTr(data) {
+            var name_ = products[data.productId].name;
+            var price_ = data.price;
+            var rate_ = data.rate;
+            var num_ = data.num;
+            var total_ = (parseFloat(price_) * parseInt(num_)).toFixed(2);
+            var fee_ = (total_ * parseFloat(rate_)).toFixed(2);
+            var td_ = "</td><td>";
+            total_money_ += parseFloat(total_);
+            total_fee_ += parseFloat(fee_);
+            return ["<tr><td>" + name_, price_, rate_, num_, total_, fee_ + "</td><tr>"].join(td_);
+        }
+        $(function () {
+            renderData();
         });
+
     </script>
 </head>
 <body>

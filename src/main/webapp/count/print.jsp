@@ -44,17 +44,23 @@
             $("#date_sp").html(date);
             var list = eval(params.datalist);
             for (var i = 0; i < list.length; i++) {
-                $('#t_body').append(generateTr(list[i]));
+                var tr_ = generateTr(list[i]);
+                if (tr_)$('#t_body').append(tr_);
+
             }
             $('#total_money_td').html(total_money_.toFixed(2));
             $('#total_fee_td').html(total_fee_.toFixed(2));
 
         }
         function generateTr(data) {
+            if(!products[data.productId])return;
             var name_ = products[data.productId].name;
             var price_ = data.price;
             var rate_ = data.rate;
             var num_ = data.num;
+            if (!name_ || !price_ || !rate_ || !num_) {
+                return false;
+            }
             var total_ = (parseFloat(price_) * parseInt(num_)).toFixed(2);
             var fee_ = (total_ * parseFloat(rate_)).toFixed(2);
             var td_ = "</td><td>";

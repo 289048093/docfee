@@ -140,7 +140,7 @@
         function object2String(obj) {
             var str = "{";
             for (var i in obj) {
-                str += i + ":" + obj[i] + ",";
+                str += i + ":" + (obj[i]||0) + ",";
             }
             str = str.substring(0, str.length - 1) + "}";
             return str;
@@ -159,6 +159,7 @@
 //            printWin.params = params;
 //            printWin.doctor = docArr[params.docId];
 //            printWin.products = proArr;
+//            alert(params.datalist);
             printWin.setParams(params,docArr[params.docId],proArr);
         }
         function getDocId() {

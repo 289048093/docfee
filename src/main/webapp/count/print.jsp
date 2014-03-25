@@ -58,7 +58,6 @@
     </script>
 </head>
 <body>
-print
 <table>
     <thead>
     <tr>

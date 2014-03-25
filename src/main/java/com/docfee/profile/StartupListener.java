@@ -8,6 +8,7 @@ import com.docfee.utils.contant.Files;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -41,7 +42,13 @@ public class StartupListener implements ServletContextListener {
                 }
 
             }
+
         });
+        try {
+            Runtime.getRuntime().exec("cmd /c start http://127.0.0.1:1689");
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 //        try {
 //            DBUtil.exec("create table tb_test(id int)");
 //        } catch (SQLException e) {

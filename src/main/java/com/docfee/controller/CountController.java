@@ -58,14 +58,14 @@ public class CountController {
     public void save(HttpServletRequest req, HttpServletResponse res) throws IOException {
         String dateStr = req.getParameter("date");
         String docIdStr = req.getParameter("docId");
-        if(docIdStr==null){
+        if (docIdStr == null) {
             res.getWriter().write("参数错误：docId is null");
         }
         Long docId = Long.parseLong(docIdStr);
         String dataStr = req.getParameter("datalist");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
 
-        Date date = DateUtil.parse(dateStr,"yyyy-MM");
+        Date date = DateUtil.parse(dateStr, "yyyy-MM");
         List<RecordVO> dbps = JsonUtil.parseCollectionJson(dataStr, RecordVO.class);
         recordService.save(dbps, docId, date);
         res.getWriter().write("保存成功");
@@ -73,10 +73,10 @@ public class CountController {
 
     public void query(HttpServletRequest req, HttpServletResponse res) {
         List<RecordEntity> vos = recordService.query();
-        req.setAttribute("list",vos);
+        req.setAttribute("list", vos);
 
         try {
-            req.getRequestDispatcher("count/list.jsp").forward(req,res);
+            req.getRequestDispatcher("count/list.jsp").forward(req, res);
         } catch (ServletException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IOException e) {
@@ -85,28 +85,24 @@ public class CountController {
 
     }
 
-    public void queryAjax(HttpServletRequest req, HttpServletResponse res) {
+    public void queryAjax(HttpServletRequest req, HttpServletResponse res) throws IOException {
         res.setContentType("application/json");
         Long docId = null;
         Date date = null;
         String docIdStr = req.getParameter("docId");
         String dateStr = req.getParameter("date");
-        if(!StringUtil.isBlank(docIdStr)){
+        if (!StringUtil.isBlank(docIdStr)) {
             docId = Long.parseLong(docIdStr);
         }
-        if(!StringUtil.isBlank(dateStr)){
-            date = DateUtil.parse(dateStr,"yyyy-MM");
+        if (!StringUtil.isBlank(dateStr)) {
+            date = DateUtil.parse(dateStr, "yyyy-MM");
         }
-        List<RecordEntity> vos = recordService.query(docId,date);
-        try {
-            res.getWriter().write(String.format("{\"result\":%s}",JsonUtil.toJson(vos)));
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+        List<RecordEntity> vos = recordService.query(docId, date);
+        res.getWriter().write(String.format("{\"result\":%s}", JsonUtil.toJson(vos)));
     }
 
-     static public void main(String[] args) throws IOException {
-         System.out.println(String.format("aaa%sbbb","oooo"));
+    static public void main(String[] args) throws IOException {
+        System.out.println(String.format("aaa%sbbb", "oooo"));
     }
 
 

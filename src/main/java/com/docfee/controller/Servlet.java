@@ -27,47 +27,38 @@ public class Servlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         String uri = request.getRequestURI();
-        uri = uri.substring(uri.lastIndexOf("/")+1) ;
+        uri = uri.substring(uri.lastIndexOf("/") + 1);
         String action = null;
-        if (uri.matches("^doctor.+.do$")) {
-            action = uri.substring("doctor.".length(), uri.length() - 3);
-            try {
-                Method method = DoctorController.class.getMethod(action,HttpServletRequest.class,HttpServletResponse.class);
-                if(method!=null) method.invoke(doctorController,request,response);
-            } catch (NoSuchMethodException e) {
-                go404(request,response);
-            } catch (InvocationTargetException e) {
-                LogUtil.error(e);
-            } catch (IllegalAccessException e) {
-                LogUtil.error(e);
-            }
+        try {
+            if (uri.matches("^doctor.+.do$")) {
+                action = uri.substring("doctor.".length(), uri.length() - 3);
 
-        } else if (uri.matches("^product.+.do$")) {
-            action = uri.substring("product.".length(), uri.length() - 3);
-            try {
-                Method method = ProductController.class.getMethod(action,HttpServletRequest.class,HttpServletResponse.class);
-               if(method!=null) method.invoke(productController,request,response);
-            } catch (NoSuchMethodException e) {
-                go404(request,response);
-            } catch (InvocationTargetException e) {
-                LogUtil.error(e);
-            } catch (IllegalAccessException e) {
-                LogUtil.error(e);
-            }
-        } else if (uri.matches("^count.+.do$")) {
-            action = uri.substring("count.".length(), uri.length() - 3);
-            try {
-                Method method = CountController.class.getMethod(action,HttpServletRequest.class,HttpServletResponse.class);
-                if(method!=null) method.invoke(countController,request,response);
-            } catch (NoSuchMethodException e) {
-                go404(request,response);
-            } catch (InvocationTargetException e) {
-                LogUtil.error(e);
-            } catch (IllegalAccessException e) {
-                LogUtil.error(e);
-            }
-        } else {
+                Method method = DoctorController.class.getMethod(action, HttpServletRequest.class, HttpServletResponse.class);
+                if (method != null) method.invoke(doctorController, request, response);
 
+
+            } else if (uri.matches("^product.+.do$")) {
+                action = uri.substring("product.".length(), uri.length() - 3);
+                Method method = ProductController.class.getMethod(action, HttpServletRequest.class, HttpServletResponse.class);
+                if (method != null) method.invoke(productController, request, response);
+            } else if (uri.matches("^count.+.do$")) {
+                action = uri.substring("count.".length(), uri.length() - 3);
+                Method method = CountController.class.getMethod(action, HttpServletRequest.class, HttpServletResponse.class);
+                if (method != null) method.invoke(countController, request, response);
+            } else {
+
+            }
+        } catch (NoSuchMethodException e) {
+            go404(request, response);
+        } catch (InvocationTargetException e) {
+            LogUtil.error(e);
+            response.getOutputStream().print("failure ...:"+e.getMessage());
+        } catch (IllegalAccessException e) {
+            LogUtil.error(e);
+            response.getOutputStream().print("failure ...:"+e.getMessage());
+        }catch (Exception e){
+            LogUtil.error(e);
+            response.getOutputStream().print("failure ...:"+e.getMessage());
         }
     }
 

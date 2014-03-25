@@ -23,28 +23,21 @@ public class DoctorController {
         return doctorService;
     }
 
-    public void delete(HttpServletRequest req,HttpServletResponse res){
-        try {
-            doctorService.delete(parseDoc(req));
-        } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        try {
-            res.sendRedirect("doctor.query.do");
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+    public void delete(HttpServletRequest req, HttpServletResponse res) throws IOException, SQLException {
+        doctorService.delete(parseDoc(req));
+        res.sendRedirect("doctor.query.do");
+
     }
 
-    public void query(HttpServletRequest req,HttpServletResponse res){
+    public void query(HttpServletRequest req, HttpServletResponse res) {
         try {
             List<DoctorEntity> list = doctorService.query();
-            req.setAttribute("doctors",list);
+            req.setAttribute("doctors", list);
         } catch (SQLException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         try {
-            req.getRequestDispatcher("doctor/query.jsp").forward(req,res);
+            req.getRequestDispatcher("doctor/query.jsp").forward(req, res);
         } catch (ServletException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IOException e) {
@@ -52,25 +45,17 @@ public class DoctorController {
         }
     }
 
-    public void add(HttpServletRequest req,HttpServletResponse res){
-        try {
-            doctorService.add(parseDoc(req));
-        } catch (SQLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        try {
-            res.getWriter().print("add success");
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
+    public void add(HttpServletRequest req, HttpServletResponse res) throws IOException, SQLException {
+        doctorService.add(parseDoc(req));
+        res.getWriter().print("add success");
     }
 
-    private DoctorEntity parseDoc(HttpServletRequest req){
-        String id=req.getParameter("id");
+    private DoctorEntity parseDoc(HttpServletRequest req) {
+        String id = req.getParameter("id");
         String name = req.getParameter("name");
         String hospital = req.getParameter("hospital");
         DoctorEntity doctorEntity = new DoctorEntity();
-        if(id!=null){
+        if (id != null) {
             doctorEntity.setId(Long.parseLong(id));
         }
         doctorEntity.setName(name);

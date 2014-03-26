@@ -23,6 +23,12 @@
     <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="js/global.js"></script>
     <script type="text/javascript">
+        window.onunload = function(){
+          window.opener.printWin = undefined;
+        };
+        function focusPrint(){
+            $('#doc_name_sp').focus();
+        }
         var params;
         var doctor;
         var products;
@@ -48,8 +54,8 @@
                 if (tr_)$('#t_body').append(tr_);
 
             }
-            $('#total_money_td').html(total_money_.toFixed(2));
-            $('#total_fee_td').html(total_fee_.toFixed(2));
+//            $('#total_money_td').html(total_money_.toFixed(2));
+            $('#total_fee_td').html(total_fee_);
 
         }
         function generateTr(data) {
@@ -58,15 +64,16 @@
             var price_ = data.price;
             var rate_ = data.rate;
             var num_ = data.num;
+            var fee_ = data.fee;
             if (!name_ || !price_ || !rate_ || !num_) {
                 return false;
             }
             var total_ = (parseFloat(price_) * parseInt(num_)).toFixed(2);
-            var fee_ = (total_ * parseFloat(rate_)).toFixed(2);
+//            var fee_ = (total_ * parseFloat(rate_)).toFixed(0);
             var td_ = "</td><td>";
             total_money_ += parseFloat(total_);
             total_fee_ += parseFloat(fee_);
-            return ["<tr><td>" + name_, price_, rate_, num_, total_, fee_ + "</td><tr>"].join(td_);
+            return ["<tr><td>" + name_, price_, rate_, num_, fee_ + "</td><tr>"].join(td_);
         }
         $(function () {
             renderData();
@@ -84,16 +91,15 @@
     <tr style="height:50px;">
         <td>药品名</td>
         <td>价格</td>
-        <td>返点数</td>
+        <td>返利</td>
         <td>数量</td>
-        <td>总额</td>
-        <td>返点金额</td>
+        <td>金额</td>
     </tr>
     </thead>
     <tfoot>
     <tr>
         <td>合计</td>
-        <td colspan="3"></td>
+        <td colspan="2"></td>
         <td id="total_money_td"></td>
         <td id="total_fee_td"></td>
     </tr>

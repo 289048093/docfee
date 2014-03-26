@@ -47,12 +47,12 @@
                     "<td class='per_price_td'><input class='per_price_input' value='" + (obj.price || 0) + "'></td>" +
                     "<td class='rate_td'><input class='rate_input' value='" + (obj.rate || 0) + "'></td>" +
                     "<td class='num_td'><input class='num_input' value='" + (obj.num || 0) + "'></td>" +
-                    "<td class='total_td'>" + (obj.num ? 0 : obj.num * obj.price) + "</td>" +
-                    "<td class='fee_td'>" + (obj.num ? 0 : obj.num * obj.price * obj.rate) + "</td>" +
+                    "<td class='total_td'>" + (obj.num ? obj.num * obj.price : 0) + "</td>" +
+                    "<td class='fee_td'><input class='fee_input' value='" + (obj.fee || (obj.num ? obj.num * obj.price * obj.rate : 0)) + "'/></td>" +
                     "<td class='operate_td'><input type='button' value='删除' onclick='$(this).parent().parent().remove();countAll();'></td></tr>");
             $("#t_content").append(tr);
             tr.find(".pro_sel").val(obj.productId || obj.product && obj.product.id);
-            changeData(null, null, tr);
+            countAll();
         }
         function changeProduct(o) {
             var sel = $(o);
@@ -76,6 +76,9 @@
                 var num = $(this).val();
                 changeData(rate, num, $(this).parent().parent());
             });
+            $(".fee_input").live('keyup', function () {
+                countAll();
+            });
             for (var i = 1; i < 13; i++) {
                 $("#month").append("<option value='" + i + "'>" + i + "</option>")
             }
@@ -91,13 +94,13 @@
             var proId = tr_.find('.pro_td').find('.pro_sel').val()
             var price = proArr[proId].price;
             total.html(parseFloat(price) * parseInt(num));
-            var fee = tr_.find('.fee_td');
-            fee.html((parseFloat(rate) * parseFloat(price) * parseInt(num)).toFixed(2));
+            var fee = tr_.find('.fee_input');
+            fee.val((parseFloat(rate) * parseFloat(price) * parseInt(num)).toFixed(0));
             countAll();
         }
         function countAll() {
             var totalArr = $('#t_content').find('.total_td');
-            var feeArr = $('#t_content').find('.fee_td');
+            var feeArr = $('#t_content').find('.fee_input');
             var totalTmp = 0;
             for (var i = 0; i < totalArr.length; i++) {
                 var val = totalArr.eq(i).html();
@@ -105,11 +108,11 @@
             }
             var feeTmp = 0;
             for (var i = 0; i < feeArr.length; i++) {
-                var val = feeArr.eq(i).html();
-                if (val)feeTmp += parseFloat(val);
+                var val = feeArr.eq(i).val();
+                if (val)feeTmp += parseInt(val);
             }
             $('#allPrice').html(totalTmp.toFixed(2));
-            $('#allFee').html(feeTmp.toFixed(2));
+            $('#allFee').html(feeTmp.toFixed(0));
         }
         function save() {
             var params = generateParams();
@@ -129,7 +132,8 @@
                 var rate = trs.eq(i).find('.rate_td').find('.rate_input').val();
                 var perPrice = trs.eq(i).find('.per_price_td').find('.per_price_input').val();
                 var num = trs.eq(i).find('.num_td').find('.num_input').val();
-                var tmp = {productId: proId, doctorId: docId, price: perPrice, num: num, rate: rate};
+                var fee = trs.eq(i).find(".fee_input").val()
+                var tmp = {productId: proId, doctorId: docId, price: perPrice, num: num, rate: rate, fee: fee};
                 list.push(object2String(tmp));
             }
             var date = 20 + $('#year').val() + "-" + $('#month').val();
@@ -140,19 +144,29 @@
         function object2String(obj) {
             var str = "{";
             for (var i in obj) {
-                str += i + ":" + (obj[i]||0) + ",";
+                var val = obj[i];
+                if (typeof val == "object") {
+                    val = object2String(val);
+                }
+                str += i + ":" + (val || 0) + ",";
             }
             str = str.substring(0, str.length - 1) + "}";
             return str;
         }
         window.printWin = null;
+        window.printWinName = "printWin";
         function print() {
-            printWin = window.open("count/print.jsp");
+            if (printWin) {
+//                printWin.alert("内容已加入打印页面");
+                printWin.focusPrint();
+            } else {
+                printWin = window.open("count/print.jsp", printWinName);
+            }
             setPrintParams();
         }
-        function setPrintParams(){
-            if(!printWin || !printWin.setParams){
-                setTimeout(setPrintParams,5);
+        function setPrintParams() {
+            if (!printWin || !printWin.setParams) {
+                setTimeout(setPrintParams, 5);
                 return;
             }
             var params = generateParams();
@@ -160,7 +174,7 @@
 //            printWin.doctor = docArr[params.docId];
 //            printWin.products = proArr;
 //            alert(params.datalist);
-            printWin.setParams(params,docArr[params.docId],proArr);
+            printWin.setParams(params, docArr[params.docId], proArr);
         }
         function getDocId() {
             return $('#doctor').val();
@@ -216,8 +230,9 @@
         <td class="operate_td">&nbsp;</td>
     </tr>
     <tr>
-        <td colspan="7" style="width:100%;"><input type="button" value="添加" onclick="addProduct();">|<input type="button" value="保存"
-                                                                                        onclick="save()">|<input
+        <td colspan="7" style="width:100%;"><input type="button" value="添加" onclick="addProduct();">|<input
+                type="button" value="保存"
+                onclick="save()">|<input
                 type="button" value="打印" onclick="print()"></td>
     </tr>
 </table>

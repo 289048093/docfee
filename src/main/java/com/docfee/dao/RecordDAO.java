@@ -36,13 +36,14 @@ public class RecordDAO {
     public void save(RecordVO e) throws SQLException {
         PreparedStatement stmt = null;
         try {
-            stmt = DBUtil.getCon().prepareStatement("insert into tb_record(doctor_id,product_id,price,rate,num,add_date) values(?,?,?,?,?,?)");
+            stmt = DBUtil.getCon().prepareStatement("insert into tb_record(doctor_id,product_id,price,rate,num,add_date,fee) values(?,?,?,?,?,?,?)");
             stmt.setLong(1, e.getDoctorId());
             stmt.setLong(2, e.getProductId());
             stmt.setBigDecimal(3, e.getPrice());
             stmt.setBigDecimal(4, e.getRate());
             stmt.setInt(5, e.getNum());
             stmt.setDate(6, DateUtil.toSqlDate(e.getDate()));
+            stmt.setBigDecimal(7,e.getFee());
             stmt.execute();
         } finally {
             DBUtil.close(stmt);
@@ -50,7 +51,7 @@ public class RecordDAO {
     }
 
     public List<RecordEntity> queryWithDoctorAndProduct(Long docId,Long proId,Date date) throws SQLException {
-        StringBuilder sql = new StringBuilder("select re.id recId,re.price recPrice,re.rate recRate,re.num recNum,re.add_date recDate," +
+        StringBuilder sql = new StringBuilder("select re.id recId,re.price recPrice,re.rate recRate,re.num recNum,re.add_date recDate,re.fee recFee, " +
                 "doc.id docId,doc.name docName,doc.hospital docHos," +
                 "pro.id proId,pro.name proName,pro.price proPrice,pro.default_rate proRate " +
                 "from tb_record re left join tb_doctor doc on re.doctor_id=doc.id left join tb_product pro on re.product_id=pro.id where 1=1 ");
@@ -90,6 +91,7 @@ public class RecordDAO {
                 rec.setRate(rs.getBigDecimal("recRate"));
                 rec.setNum(rs.getInt("recNum"));
                 rec.setDate(rs.getDate("recDate"));
+                rec.setFee(rs.getBigDecimal("recFee"));
                 doc.setId(rs.getLong("docId"));
                 doc.setName(rs.getString("docName"));
                 doc.setHospital(rs.getString("docHos"));

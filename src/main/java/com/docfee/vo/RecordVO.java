@@ -25,6 +25,34 @@ public class RecordVO extends BaseVO {
 
     private Integer num;
 
+    /**
+     * 返利费用（可能手动收入，如取整）
+     */
+    private BigDecimal fee;
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public void setFee(BigDecimal fee) {
+        this.fee = fee;
+    }
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
+    }
 
     public Long getDoctorId() {
         return doctorId;
@@ -76,7 +104,7 @@ public class RecordVO extends BaseVO {
 
     @Override
     public String toString() {
-        return String.format("{id:%1$d,doctorId:%2$s,productId:%3$s,price:%4$s,rate:%5$s,num:%6$s,date:%7$tF}",getId(),doctorId,productId,price,rate,num,date);
+        return String.format("{id:%1$d,doctorId:%2$s,productId:%3$s,price:%4$s,rate:%5$s,num:%6$s,date:%7$tF}", getId(), doctorId, productId, price, rate, num, date);
     }
 
     public static void main(String[] args) {

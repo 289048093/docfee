@@ -21,6 +21,18 @@ public class RecordEntity extends BaseEntity {
     private BigDecimal price;
 
     private Integer num;
+    /**
+     * 返利费用（可能手动收入，如取整）
+     */
+    private BigDecimal fee;
+
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public void setFee(BigDecimal fee) {
+        this.fee = fee;
+    }
 
     public Integer getNum() {
         return num;
